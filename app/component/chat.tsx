@@ -7,34 +7,38 @@ export default function ChatComponent() {
         const [loading, setLoading] = useState(false);
         const [error, setError] = useState<string | null>(null);
         const [userPrompt, setUserPrompt] = useState("");
+
+
         const generateVideo = async () => {
-        setLoading(true);
-        setError(null);
-        setVideoUrl(null);
+                // ローディング開始
+                setLoading(true);
+                setError(null);
+                setVideoUrl(null);
 
-        const videoId = "test"; // 固定値 (本番では適切に設定)
+                const videoId = "test"; // 固定値 (本番では適切に設定)
 
-        try {
-            // 1. プロンプトを送信
-            const videoResponse = await fetch(`http://localhost:8000/api/prompt`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ user_prompt: userPrompt, video_id: videoId }),
-            });
+                try {
+                    // 1. プロンプトを送信
+                    const videoResponse = await fetch(`http://localhost:8000/api/prompt`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ user_prompt: userPrompt, video_id: videoId }),
+                    });
 
-            if (!videoResponse.ok) {
-                throw new Error("動画生成に失敗しました。");
-            }
+                    if (!videoResponse.ok) {
+                        throw new Error("動画生成に失敗しました。");
+                    }
 
-            const blob = await videoResponse.blob();
-            const url = URL.createObjectURL(blob);
-            setVideoUrl(url);
-        } catch (err) {
-            setError((err as Error).message);
-        } finally {
-            setLoading(false);
-        }
-    };
+                    const blob = await videoResponse.blob();
+                    const url = URL.createObjectURL(blob);
+                    setVideoUrl(url);
+                } catch (err) {
+                    setError((err as Error).message);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
     return (
         <div style={{ textAlign: "center", padding: "20px" }}>
             <h2>動画生成</h2>
