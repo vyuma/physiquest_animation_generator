@@ -1,114 +1,72 @@
 "use client";
-
 import React, { useState } from "react";
-import { readStreamableValue } from "ai/rsc";
-import { runAgent } from "./actions";
-import { StreamEvent } from "@langchain/core/tracers/log_stream";
+import Tabs from "./components/Tabs";
+import TextInputForm from "./components/TextInputForm";
+import ClipboardCopy from "./components/ClipboardCopy";
+import VideoComponent from "@/app/components/VIdeo";
 
 
 export default function Page() {
-    const [input, setInput] = useState("");
-    const [data, setData] = useState<StreamEvent[]>([]);
+    const [videoUrl, setVideoUrl] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [userPrompt, setUserPrompt] = useState("");
+    
+
 
     async function handleSubmit(e: React.FormEvent) {
+        setLoading(true);
+        const defulatpath = process.env.NEXT_PUBLIC_API_URL
+
+        console.log(defulatpath)
+        const path =  defulatpath+"/api/prompt";
         e.preventDefault();
-        if (!input) return;
-        const { streamData } = await runAgent(input);
-        for await (const item of readStreamableValue(streamData)) {
-            setData((prev) => [...prev, item]);
+        if (!userPrompt) return;
+        // VideoIdsession管理
+        const videoId = "test";
+
+        try {
+            // 1. プロンプトを送信
+            const videoResponse = await fetch(path, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user_prompt: userPrompt, video_id: videoId }),
+            });
+
+            if (!videoResponse.ok) {
+                throw new Error("動画生成に失敗しました。");
+            }
+
+            const blob = await videoResponse.blob();
+            const url = URL.createObjectURL(blob);
+            setVideoUrl(url);
+        } catch (err) {
+            setError((err as Error).message);
+            console.log(error)
+        } finally {
+            setLoading(false);
         }
     }
-    let chatResults: any = [];
-    for (let i = 0; i < data.length; i++) {
-        switch (data[i].event) {
-            case "on_tool_start":
-                chatResults.push({
-                    type: "tool",
-                    runID: data[i].run_id,
-                    input: data[i].data.input,
-                    output: null,
-                    name: data[i].name,
-                });
-                break;
-            case "on_tool_end":
-                const toolIndex = chatResults.findIndex(
-                    (item: any) => item.runID === data[i].run_id
-                );
-                chatResults[toolIndex].output = data[i].data.output;
-                break;
-            case "on_chat_model_start":
-                chatResults.push({
-                    type: "message",
-                    runID: data[i].run_id,
-                    output: "",
-                });
-                break;
-            case "on_chat_model_stream":
-                const messageIndex = chatResults.findIndex(
-                    (item: any) => item.runID === data[i].run_id
-                );
-                chatResults[messageIndex].output = chatResults[messageIndex].output + data[i].data.chunk.kwargs.content;
-                break;
-        }
-    }
+
+
 
     return (
-        <div className="flex flex-col w-full gap-2">
-            <form onSubmit={handleSubmit} className="flex flex-col w-full gap-2">
-                <input
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    className="border border-gray-300 rounded-md p-2 mr-2 w-full"
-                />
-                <button
-                    type="submit"
-                    className="bg-blue-500 text-white px-4 py-2 rounded-md"
-                >
-                    Run
-                </button>
-            </form>
-            <div className="flex flex-col w-full gap-2">
-                <div
-                    className="flex flex-col gap-2 px-2 h-[650px] overflow-y-auto"
-                >
-                    {
-                        chatResults.map((item: any, i: number) => {
-                            switch (item.type) {
-                                case "tool":
-                                    return (
-                                        <div key={i} className="p-4 bg-slate-100 rounded-lg">
-                                            <strong><code>{item.name}</code> Input</strong>
-                                            <pre className="break-all text-sm">
-                                                {JSON.stringify(item.input, null, 2)}
-                                            </pre>
-                                            {item.output && (
-                                                <>
-                                                    <strong>Tool result</strong>
-                                                    <pre className="break-all text-sm">
-                                                        {JSON.stringify(item.output, null, 2)}
-                                                    </pre>
-                                                </>
-                                            )}
-                                        </div>
-                                    );
-                                case "message":
-                                    if (item.output === "") return null;
-                                    return (
-                                        <div key={i} className="p-4 bg-slate-100 rounded-lg prose">
+        <div className="flex w-full gap-2 justify-center">
 
-                                            {item.output}
-                                        </div>
-                                    );
-                                default:
-                                    return null;
-                            }
+            <div className="flex flex-col w-[40%] ">
+                <TextInputForm input={userPrompt} handleSubmit={handleSubmit} setInput={setUserPrompt} loading={loading} />
+                <Tabs />  
+                <ClipboardCopy/>
+                <ClipboardCopy/>
+                <ClipboardCopy/>
+                <ClipboardCopy/>
 
-                        })
-
-                    }
-                </div>
             </div>
+            <div className="flex flex-col w-[40%] ">
+                <VideoComponent videoUrl={videoUrl}/>
+            </div>
+            
+            
         </div>
     );
 }

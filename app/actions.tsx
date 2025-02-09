@@ -20,7 +20,6 @@ export async function runAgent(input: string) {
             const formattedItem = JSON.parse(JSON.stringify(item, null, 2));
             stream.update(formattedItem);
         }
-
         stream.done();
     }
 
