@@ -1,0 +1,34 @@
+╭─────────────────────────────── Traceback (most recent call last) ────────────────────────────────╮
+│ /workspaces/physiquest_animation_generator/backend/venv/lib/python3.11/site-packages/manim/cli/r │
+│ ender/commands.py:120 in render                                                                  │
+│                                                                                                  │
+│   117 │   │   │   try:                                                                           │
+│   118 │   │   │   │   with tempconfig({}):                                                       │
+│   119 │   │   │   │   │   scene = SceneClass()                                                   │
+│ ❱ 120 │   │   │   │   │   scene.render()                                                         │
+│   121 │   │   │   except Exception:                                                              │
+│   122 │   │   │   │   error_console.print_exception()                                            │
+│   123 │   │   │   │   sys.exit(1)                                                                │
+│                                                                                                  │
+│ /workspaces/physiquest_animation_generator/backend/venv/lib/python3.11/site-packages/manim/scene │
+│ /scene.py:229 in render                                                                          │
+│                                                                                                  │
+│    226 │   │   """                                                                               │
+│    227 │   │   self.setup()                                                                      │
+│    228 │   │   try:                                                                              │
+│ ❱  229 │   │   │   self.construct()                                                              │
+│    230 │   │   except EndSceneEarlyException:                                                    │
+│    231 │   │   │   pass                                                                          │
+│    232 │   │   except RerunSceneException as e:                                                  │
+│                                                                                                  │
+│ /workspaces/physiquest_animation_generator/backend/tmp/test_2.py:7 in construct                  │
+│                                                                                                  │
+│    4 class GeneratedScene(Scene):                                                                │
+│    5 │   def construct(self):                                                                    │
+│    6 │   │   # Create a red circle                                                               │
+│ ❱  7 │   │   circle = Circle(radius=1, color=LIGHT_BULE)                                         │
+│    8 │   │                                                                                       │
+│    9 │   │   # Animation 1: Draw the red circle                                                  │
+│   10 │   │   self.play(Create(circle))                                                           │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+NameError: name 'LIGHT_BULE' is not defined

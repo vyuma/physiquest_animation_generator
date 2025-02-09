@@ -4,16 +4,19 @@ from manim import *
 class GeneratedScene(Scene):
     def construct(self):
         # Create a circle
-        circle = Circle(radius=2, color=BLUE, stroke_width=4)
-
-        # Draw the circle with a "Draw" animation
-        self.play(Create(circle))
+        circle = Circle(radius=2, color=BLUE, fill_opacity=0, stroke_width=4)
         
-        # Scale the circle up to 1.5 times its original size
-        self.play(circle.animate.scale(1.5))
+        # Draw the circle
+        self.play(DrawBorderThenFill(circle))
         
-        # Pulse effect for 2 seconds
-        self.play(circle.animate.scale(1.2).scale(1/1.2), run_time=2, rate_func=there_and_back)
+        # Pulse animation
+        self.play(circle.animate.scale(1.1), run_time=0.5)
+        self.play(circle.animate.scale(0.9), run_time=0.5)
+        self.play(circle.animate.scale(1.1), run_time=0.5)
+        self.play(circle.animate.scale(0.9), run_time=0.5)
         
-        # Keep the circle on the screen
-        self.wait(1)
+        # Hold the pulsing effect
+        self.wait(2)
+        
+        # Fade out the circle
+        self.play(FadeOut(circle))

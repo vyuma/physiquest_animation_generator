@@ -4,6 +4,7 @@ import Tabs from "./components/Tabs";
 import TextInputForm from "./components/TextInputForm";
 import ClipboardCopy from "./components/ClipboardCopy";
 import VideoComponent from "@/app/components/VIdeo";
+import Headers from "@/app/components/header";
 
 
 export default function Page() {
@@ -51,7 +52,10 @@ export default function Page() {
 
 
     return (
-        <div className="flex w-full gap-2 justify-center">
+        <div className="flex flex-col w-full gap-2">
+            <Headers />
+         <div className="flex w-full gap-2 justify-center">
+            
 
             <div className="flex flex-col w-[40%] ">
                 <TextInputForm input={userPrompt} handleSubmit={handleSubmit} setInput={setUserPrompt} loading={loading} />
@@ -60,13 +64,12 @@ export default function Page() {
                 <ClipboardCopy/>
                 <ClipboardCopy/>
                 <ClipboardCopy/>
-
             </div>
             <div className="flex flex-col w-[40%] ">
                 <VideoComponent videoUrl={videoUrl}/>
             </div>
-            
-            
+        </div>   
         </div>
+        
     );
 }

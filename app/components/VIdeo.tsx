@@ -1,4 +1,4 @@
-import React, { useState } from "react"; 
+import React from "react"; 
 
 
 type VideoUrl = {
@@ -9,8 +9,8 @@ const VideoComponent = ({videoUrl}:VideoUrl) => {
 
         if (!videoUrl) {
             return (
-                <div className="w-[48rem] h-[27rem] bg-gray-500  my-10 ml-20">
-                    
+                <div className="w-[48rem] h-[27rem] bg-gray-200 shadow-md  my-10 ml-20 rounded-xl">
+                    {/* なにも表示しないスペース */}
                 </div>
             );
         }
@@ -18,8 +18,8 @@ const VideoComponent = ({videoUrl}:VideoUrl) => {
         return (
             <div>
                 {/* ここはリスポンス対応する必要ある */}
-                <video controls width="768" className="object-fill my-10 ml-20">
-                    <source src={videoUrl} type="video/mp4" />
+                <video controls width="768" className="object-fill my-10 ml-20 rounded-xl" autoPlay muted>
+                    <source src={videoUrl} type="video/mp4"  />
                     お使いのブラウザは video タグをサポートしていません。
                 </video>
             </div>

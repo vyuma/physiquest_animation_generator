@@ -3,18 +3,14 @@ from manim import *
 
 class GeneratedScene(Scene):
     def construct(self):
-        # Introduction: Start with a blank screen
-        self.wait(1)
+        # Create a red circle
+        circle = Circle(radius=1, color=LIGHT_BULE)
 
-        # Circle Creation: Create a red circle
-        circle = Circle(radius=1, color=RED)
+        # Animation 1: Draw the red circle
         self.play(Create(circle))
-
-        # Scaling: Scale the circle up to 1.5 times its size
+        
+        # Animation 2: Scale the circle
         self.play(circle.animate.scale(1.5))
-
-        # Movement: Move the circle smoothly to the right side of the screen
-        self.play(circle.animate.shift(RIGHT * 3))
-
-        # Conclusion: Fade out the circle
+        
+        # Animation 3: Fade out
         self.play(FadeOut(circle))
