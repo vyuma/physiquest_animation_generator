@@ -37,6 +37,7 @@ next-env.d.ts
 
 # envファイルを無視
 backend/venv
+backend/.venv
 
 __pycache__/
 *.pyc

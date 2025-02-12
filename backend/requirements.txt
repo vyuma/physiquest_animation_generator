@@ -13,3 +13,5 @@ cmake
 pycairo
 langchain
 langchain_openai
+langchain-google-genai
+langdetect

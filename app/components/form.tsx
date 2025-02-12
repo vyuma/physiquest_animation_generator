@@ -40,7 +40,7 @@ const Forms = ({input, handleSubmit, setInput, loading}: formProps) => {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-2 w-1/3 m-10 relative">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-2 w-full relative">
             <textarea
                 className="w-full h-40 px-5 py-2 pb-10 outline-none resize-none rounded-3xl shadow-lg"
                 placeholder="文章を入力して"
