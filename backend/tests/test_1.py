@@ -14,3 +14,4 @@ class GeneratedScene(Scene):
         
         # Animation 3: Fade out
         self.play(FadeOut(circle))
+        bad()

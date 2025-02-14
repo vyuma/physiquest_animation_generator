@@ -1,11 +1,21 @@
 import { useState } from "react";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import {rainbow} from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 const Code = ({code}:{code:string}) => {
 const [copied, setCopied] = useState(false); // Copied! の状態
 
 const defaultText ="";
+
+
+const isDarkMode = () => {
+    if (typeof window !== "undefined") {
+        return document.documentElement.classList.contains("dark");
+    }
+    return false;
+};
+
 
 const handleCopy = () => {
 const textToCopy = code // .replace(/\\n/g, "\n").replace(/^"|"$/g, "")  || defaultText;
@@ -20,8 +30,8 @@ navigator.clipboard.writeText(textToCopy)
 return (
 <div className="flex flex-col w-full gap-2">
     <form className="flex flex-col gap-2 relative">
-    <SyntaxHighlighter language="javascript"      className="w-full h-60 px-8 py-5 pb-10 bg-white text-slate-700 outline-none resize-none rounded-xl"
-        style={ docco }
+    <SyntaxHighlighter language="python"  className="w-full h-60 px-8 py-5 pb-10 !bg-white outline-none resize-none rounded-xl dark:!bg-slate-700 "
+        style={ isDarkMode() ?  rainbow :  docco }
         showLineNumbers={true}
         
     >
@@ -30,7 +40,7 @@ return (
     </SyntaxHighlighter>
     {/* コピー完了時の吹き出し */}
     {copied && (
-        <div className="absolute right-12 bottom-12 bg-black text-white text-sm px-3 py-1 rounded-md">
+        <div className="absolute right-12 bottom-12 bg-black text-white text-sm px-3 py-1 rounded-md dark:bg-white dark:text-slate-700">
         Copied!
         </div>
     )}
@@ -39,7 +49,7 @@ return (
         onClick={handleCopy}
         className="absolute right-0 bottom-2 mb-1 mr-4 w-10 h-10 flex items-center justify-center"
     >
-        <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 stroke-current text-slate-700" viewBox="0 0 24 24">
+        <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 stroke-current text-slate-700 dark:text-white" viewBox="0 0 24 24">
         <path
             fill="none"
             stroke="currentColor"

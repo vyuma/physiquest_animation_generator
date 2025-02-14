@@ -10,7 +10,7 @@ const VideoComponent = ({videoUrl}:VideoUrl) => {
 
         if (!videoUrl) {
             return (
-                <div className="w-[48rem] h-[27rem] bg-gray-200 shadow-md  rounded-xl">
+                <div className="w-full h-[27rem]  bg-white border-slate-100/30 shadow-lg rounded-xl dark:bg-gray-200/30 border-gray-200/30">
                     {/* なにも表示しないスペース */}
                 </div>
             );

@@ -15,4 +15,5 @@ langchain
 langchain_openai
 langchain-google-genai
 langdetect
+deepl
 ruff

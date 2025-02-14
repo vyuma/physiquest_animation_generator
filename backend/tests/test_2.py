@@ -30,8 +30,16 @@ class GeneratedScene(Scene):
         self.play(Create(axes), Write(x_label), Write(y_label))
         self.play(Create(graph))
         self.wait(1)
+        
 
         # Fade in title and parameters
         self.play(FadeIn(title), run_time=1)
         self.play(FadeIn(parameters), run_time=1)
         self.wait(2)
+
+if __name__ == "__main__":
+    scene = GeneratedScene()
+    try:    
+        a = scene.render()
+    except 
+        print("Error")
