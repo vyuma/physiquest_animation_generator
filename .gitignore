@@ -37,7 +37,7 @@ next-env.d.ts
 
 # envファイルを無視
 backend/venv
-backend/.venv
+.venv
 
 __pycache__/
 *.pyc
@@ -45,3 +45,5 @@ __pycache__/
 
 # videosフォルダを無視
 backend/media
+
+backend/tmp/*.py

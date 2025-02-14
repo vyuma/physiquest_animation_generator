@@ -45,7 +45,7 @@ animation_service = ManimAnimationService()
 
 @app.get('/api/get_video/{video_id}')
 async def get_video(video_id: str):
-    path = workspace_path / video_id / "480p15" / "GeneratedScene.mp4"
+    path = workspace_path / "480p15" / "GeneratedScene.mp4"
     if not path.is_file():
         return responses.JSONResponse(status_code=404, content={'message': 'Video not found'})
     return FileResponse(path, media_type="video/mp4", filename="GeneratedScene.mp4")
@@ -53,7 +53,7 @@ async def get_video(video_id: str):
 @app.post("/api/prompt", response_class=FileResponse)
 async def prompt(prompt: Prompt):
     err = animation_service.generate_animation_with_error_handling(prompt.user_prompt, prompt.video_id)
-    path = workspace_path / prompt.video_id / "480p15" / "GeneratedScene.mp4"
+    path = workspace_path / "480p15" / "GeneratedScene.mp4"
     if err != "Success":
         return responses.JSONResponse(status_code=500, content={'message': err})
     return FileResponse(path=path, media_type="video/mp4", filename="GeneratedScene.mp4")
@@ -64,7 +64,7 @@ async def get_script_to_animation(script_file_id: str):
     if not path.is_file():
         return responses.JSONResponse(status_code=404, content={'message': 'Script not found'})
     err = animation_service.run_script_file(path, script_file_id)
-    animation_path = workspace_path / script_file_id / "480p15" / "GeneratedScene.mp4"
+    animation_path = workspace_path / "480p15" / "GeneratedScene.mp4"
     if err != "Success":
         return responses.JSONResponse(status_code=404, content={'message': err})
     return FileResponse(animation_path, media_type="video/mp4", filename="GeneratedScene.mp4")
@@ -84,7 +84,7 @@ async def post_code(script_file_id: str, code: Script):
     err = animation_service.run_script(script_file_id, code.script)
     if err != "Success":
         return responses.JSONResponse(status_code=500, content={'message': err})
-    path = workspace_path / script_file_id / "480p15" / "GeneratedScene.mp4"
+    path = workspace_path / "480p15" / "GeneratedScene.mp4"
     return FileResponse(path, media_type="video/mp4", filename="GeneratedScene.mp4")
 
 @app.post("/api/generate_detail_prompt")
@@ -92,6 +92,8 @@ async def generate_detail_prompt(prompt:DetailPrompt):
     output = animation_service.generate_detail_prompt(prompt.user_prompt, prompt.instruction_type)
     return responses.JSONResponse(content={'output': output})
 
+"""
 if __name__ == '__main__':
     import uvicorn
     uvicorn.run(app, host='localhost', port=8000)
+"""
