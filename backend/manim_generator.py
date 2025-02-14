@@ -62,8 +62,9 @@ class ManimAnimationService:
             return e.stderr
 
     def fix_script(self, script: str, error: str, file_name: str) -> str:
+        lint = self._get_lint_error(f"tmp/{file_name}.py")
         prompt1 = PromptTemplate(
-            input_variables=["script", "error"],
+            input_variables=["script", "error", "lint"],
             template=self.prompts["error"]["prompt1"]
         )
         prompt2 = PromptTemplate(
@@ -75,7 +76,7 @@ class ManimAnimationService:
             first= prompt1 | self.think_llm,
             last = prompt2 | self.think_llm | parser
         )
-        messages = {"script": script, "error": error}
+        messages = {"script": script, "error": error, "lint": lint}
         output = chain.invoke(messages)
         return output.replace("```python", "").replace("```", "")
     
