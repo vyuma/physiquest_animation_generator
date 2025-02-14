@@ -78,6 +78,17 @@ class ManimAnimationService:
         messages = {"script": script, "error": error}
         output = chain.invoke(messages)
         return output.replace("```python", "").replace("```", "")
+    
+    def _get_lint_error(self, script_path: str) -> str:
+        result = subprocess.run(
+            ["ruff", "check", script_path],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        output = result.stdout if result.stdout else result.stderr
+        print(output)
+        return output
 
     def generate_animation_with_error_handling(self, user_prompt: str, file_name: str) -> str:
         script = self.generate_script(user_prompt)
@@ -90,7 +101,7 @@ class ManimAnimationService:
             count += 1
         return err
 
-    def run_script_file(self, file_path: Path, file_name: str) -> str:
+    def run_script_file(self, file_path: Path) -> str:
         try:
             subprocess.run(
                 ["manim", "-pql", str(file_path), "GeneratedScene"],
