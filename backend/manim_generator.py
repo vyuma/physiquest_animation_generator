@@ -9,6 +9,8 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import PromptTemplate
 from langchain.schema.runnable import RunnableSequence
 from langchain_core.output_parsers import StrOutputParser
+import importlib
+import manim
 
 load_dotenv('./.env.local')
 
@@ -51,15 +53,25 @@ class ManimAnimationService:
         with open(tmp_path, "w") as f:
             f.write(script)
         try:
-            subprocess.run(
-                ["manim", "-pql", str(tmp_path), "GeneratedScene"],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True, check=True
-            )
+            module = importlib.import_module(str(tmp_path).replace("/", ".")[:-3])
+            with manim.tempconfig({"quality": "low_quality", "preview": False}):
+                scene = module.GeneratedScene()
+                scene.render()
             return "Success"
-        except subprocess.CalledProcessError as e:
-            return e.stderr
+        except Exception as e:
+            print(f"\n\nError---\n{str(e)}\n-----")
+            return str(e)
+
+    def run_script_file(self, file_path: Path) -> str:
+        try:
+            module = importlib.import_module(str(file_path).replace("/", ".")[:-3])
+            with manim.tempconfig({"quality": "low_quality", "preview": False}):
+                scene = module.GeneratedScene()
+                scene.render()
+            return "Success"
+        except Exception as e:
+            print(f"\n\nError---\n{str(e)}\n-----")
+            return str(e)
 
     def fix_script(self, script: str, error: str, file_name: str) -> str:
         lint = self._get_lint_error(f"tmp/{file_name}.py")
@@ -102,17 +114,6 @@ class ManimAnimationService:
             count += 1
         return err
 
-    def run_script_file(self, file_path: Path) -> str:
-        try:
-            subprocess.run(
-                ["manim", "-pql", str(file_path), "GeneratedScene"],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True, check=True
-            )
-            return "Success"
-        except subprocess.CalledProcessError as e:
-            return e.stderr
     
     def generate_detail_prompt(self,user_prompt:str,instruction_type:int)->str:
         # 入力された言語を判定する
