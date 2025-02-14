@@ -93,20 +93,20 @@ class ManimAnimationService:
             text=True
         )
         output = result.stdout if result.stdout else result.stderr
+        print(output)
         return output
 
     def generate_animation_with_error_handling(self, user_prompt: str, file_name: str) -> str:
         script = self.generate_script(user_prompt)
         err = self.run_script(file_name, script)
         count = 0
-        limit_count = 1
+        limit_count = 7
         while err != "Success" and count < limit_count:
             script = self.fix_script(script, err, file_name)
             err = self.run_script(file_name, script)
             count += 1
         return err
 
-    
 
     def run_script_file(self, file_path: Path) -> str:
         try:
