@@ -53,15 +53,15 @@ const Tabs = ({activeTab,setActiveTab}: activeTab) => {
 
   return (
     <div className=" w-full mx-auto">
-        <div className="flex justify-center space-x-4"> 
+        <div className="flex justify-center space-x-4 mt-5"> 
             {tabData.map((tab, index) => (
             <button
                 key={index}
                 onClick={() => setActiveTab(index)}
                 className={`pt-1 pb-1 p-4 rounded-2xl flex items-center justify-center ${
                 activeTab === index
-                    ? "bg-sky-700 text-white"
-                    : "bg-white text-slate-700"
+                    ? "bg-sky-400 text-white dark:bg-sky-700 "
+                    : "bg-white text-slate-700 dark:bg-slate-700 dark:text-white"
                 }`}
             >
                 {tab.icon}

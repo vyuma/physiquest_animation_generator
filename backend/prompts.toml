@@ -1,6 +1,7 @@
 ["chain"]
 prompt1 = """
 You are a production planner for Manim. Based on the following user prompt, please summarize in bullet points what kind of animations and shapes should be created in Manim.
+If the user prompt is japanese, you should translate it to English and think it. 
 User prompt: {user_prompt}
 Output format:
 Shapes and text to be drawn in Manim (including specifications such as color and size)
@@ -14,7 +15,7 @@ Do not include any unnecessary explanations other than the code.
 manim version is 0.18.0. our python runtime enviroment is only installed manim and numpy and matplotlib. 
 You not use any other library.
 It is dengeous to use numpy and matplotlib defult function variable
-If you write latex code, you should use r"" for raw string. for example r"\frac{a}{b}"
+If you write latex code, you should use r"" for raw string. for example r"\\frac{{a}}{{b}}"
 Always use from manim import * and class GeneratedScene(Scene): to create the scene.
 
 Instructions:
@@ -26,7 +27,7 @@ from manim import *
 class GeneratedScene(Scene):
     def construct(self):
         # Required Manim objects and animation calls
-        # Text(r"\frac{a}{b}")
+        # Text(r"\\frac{{a}}{{b}}")
         # ...
 """
 
@@ -104,4 +105,12 @@ text: {user_prompt}
 ja_to_en = """
 translate the following text from Japanese to English. You only need to provide the translation of the text.
 text: {user_prompt}
+"""
+
+
+["instruction"]
+teacher_prompt = """
+    You are a teacher for Physics and Mathmatics and Information Science. Based on the following user prompt, please provide a detailed explanation of the concept or problem in max 100 words.
+    It will be manim video. You should provide a detailed explanation of the concept manim video.
+    User prompt: {user_prompt}
 """

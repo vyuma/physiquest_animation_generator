@@ -92,19 +92,20 @@ export default function Page() {
 
 
     return (
-    <div className="flex flex-col w-full gap-2">
+    <div className="flex flex-col w-full gap-2 bg-gray-200 dark:bg-slate-600">
             <Headers />
         <div className="flex w-full gap-2 justify-center">
             <div className="flex flex-col w-[40%] ">
-                <div className="ml-10 mt-10">
-                    <TextInputForm input={userPrompt}  handleSubmit={handleSubmit} setInput={setUserPrompt} loading={loading} />
-                </div>
-                
-                <div className="mb-5">
+        <div className="mb-5">
                     <Tabs activeTab={activeTab} setActiveTab={setActiveTab} /> 
                 </div>
 
-                <div className="flex flex-col ml-10 mt-4 mb-1 gap-y-4">
+                <div className="mx-2">
+                    <TextInputForm input={userPrompt}  handleSubmit={handleSubmit} setInput={setUserPrompt} loading={loading} />
+                </div>
+                
+
+                <div className="flex flex-col mt-4 mb-1 gap-y-4">
                     {
                         filteredExamplePrompt.map((prompt,index) => {
                             return (
@@ -117,11 +118,11 @@ export default function Page() {
                 </div>
                 
             </div>
-            <div className="flex flex-col w-[40%] ">
+            <div className="flex flex-col w-[50%] ">
                 <div className="my-10 ml-20">
                     <VideoComponent videoUrl={videoUrl}/>
                 </div>
-                <div>
+                <div className="ml-20">
                     {
                         videoUrl && <DawnloadButton videoUrl={videoUrl} />
                     }

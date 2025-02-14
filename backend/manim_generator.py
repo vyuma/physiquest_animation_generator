@@ -9,6 +9,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import PromptTemplate
 from langchain.schema.runnable import RunnableSequence
 from langchain_core.output_parsers import StrOutputParser
+import deepl
 
 load_dotenv('./.env.local')
 
@@ -20,14 +21,17 @@ class ManimAnimationService:
         self.pro_llm   = self._load_llm("gemini-2.0-pro-exp")
         self.flash_llm = self._load_llm("gemini-2.0-flash")
         self.lite_llm = self._load_llm("gemini-2.0-flash-lite-preview-02-05")
+        self.translator = deepl.Translator(os.getenv('DEEPL_API_KEY'))
     
     def _load_llm(self, model_type: str):
         if os.getenv('OPENAI_API_KEY'):
             return ChatOpenAI(model='gpt-4o-mini', temperature=0)
         return ChatGoogleGenerativeAI(model=model_type, google_api_key=os.getenv('GEMINI_API_KEY'))
-    
+
     def generate_script(self, user_prompt: str) -> str:
-        lang, user_prompt = self._llm_en_translation(user_prompt)
+        is_translation = False
+        if is_translation == True:
+            lang, user_prompt = self._llm_en_translation(user_prompt)
         prompt1 = PromptTemplate(
             input_variables=["user_prompt"],
             template=self.prompts["chain"]["prompt1"]
@@ -41,6 +45,7 @@ class ManimAnimationService:
             first= prompt1 | self.think_llm,
             last = prompt2 | self.pro_llm | parser
         )
+        
         output = chain.invoke({"user_prompt": user_prompt})
         return output.replace("```python", "").replace("```", "")
     
@@ -60,7 +65,7 @@ class ManimAnimationService:
             return "Success"
         except subprocess.CalledProcessError as e:
             return e.stderr
-
+    
     def fix_script(self, script: str, error: str, file_name: str) -> str:
         prompt1 = PromptTemplate(
             input_variables=["script", "error"],
@@ -90,7 +95,9 @@ class ManimAnimationService:
             count += 1
         return err
 
-    def run_script_file(self, file_path: Path, file_name: str) -> str:
+    
+
+    def run_script_file(self, file_path: Path) -> str:
         try:
             subprocess.run(
                 ["manim", "-pql", str(file_path), "GeneratedScene"],
@@ -136,7 +143,17 @@ class ManimAnimationService:
         output = chain.invoke({"user_prompt":user_prompt})
         
         return output
-    
+
+    def _en_ja_translate_deepl(self,user_prompt:str)->str:
+        lang_ja = 'JA'
+        results = self.translator.translate_text(user_prompt, target_lang=lang_ja)
+        return results.text
+
+    def _ja_en_translate_deepl(self,user_prompt:str)->str:
+        lang_en = 'EN-US'
+        results = self.translator.translate_text(user_prompt, target_lang=lang_en)
+        return results.text
+
     def _ja_en_translate(self,user_prompt:str)->str:
         # 日本語から英語への翻訳
         prompt = PromptTemplate(
@@ -166,7 +183,8 @@ class ManimAnimationService:
         # 翻訳
         lang = detect(user_prompt)
         if lang == "ja":
-            return lang,self._ja_en_translate(user_prompt)
+            user_prompt = self._ja_en_translate_deepl(user_prompt)
+            return lang,user_prompt
         else:
             return lang,user_prompt
     
@@ -185,11 +203,12 @@ class ManimAnimationService:
         
         if now_lang != original_lang:
             if original_lang == "ja":
-                return self._en_ja_translate(prompt)
+                translate_error = self._en_ja_translate_deepl(prompt)
             else:
-                return self._ja_en_translate(prompt)
+                translate_error = self._ja_en_translate_deepl(prompt)
         else:
-            return prompt
+            translate_error = prompt
+        return translate_error
     
     
     def instruction_type_to_str(self,instruction_type:int)->str:
@@ -203,8 +222,34 @@ class ManimAnimationService:
         elif instruction_type==3:
             return self.prompts["detailed_prompt"]["shape_instructions"]
         else:
-            return Exception("instruction_typeが不正です")            
+            return Exception("instruction_typeが不正です")
+        
+        
+    
+    # ここから下は軽量化のための関数
+    
+    # 可能ならこここそストリーミングを行いたい
+    def generate_instruction(self, user_prompt: str) -> str:
+        prompt = PromptTemplate(
+            input_variables=["user_prompt"],
+            template=self.prompts["instruction"]["teacher_prompt"]
+        )
+        original_lang = detect(user_prompt)
+        if original_lang == "ja":
+            user_prompt = self._en_ja_translate(user_prompt)
+        parser = StrOutputParser()
+        chain = prompt | self.flash_llm | parser
+        output = chain.invoke({"user_prompt": user_prompt})
+        
+        original_lang_output = self._llm_reverse_translate(original_lang,output)
+        
+        return output, original_lang_output
+    
+    
+    
+    
 
 if __name__ == "__main__":
     describe = ManimAnimationService()
     print(describe.generate_detail_prompt("半径3の円を書いてください",1))
+    
