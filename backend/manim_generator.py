@@ -10,6 +10,8 @@ from langchain.prompts import PromptTemplate
 from langchain.schema.runnable import RunnableSequence
 from langchain_core.output_parsers import StrOutputParser
 import deepl
+import importlib
+import manim
 
 load_dotenv('./.env.local')
 
@@ -27,6 +29,17 @@ class ManimAnimationService:
         if os.getenv('OPENAI_API_KEY'):
             return ChatOpenAI(model='gpt-4o-mini', temperature=0)
         return ChatGoogleGenerativeAI(model=model_type, google_api_key=os.getenv('GEMINI_API_KEY'))
+
+    def _get_lint_error(self, script_path: str) -> str:
+        result = subprocess.run(
+            ["ruff", "check", script_path],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        output = result.stdout if result.stdout else result.stderr
+        print(output)
+        return output
 
     def generate_script(self, user_prompt: str) -> str:
         is_translation = False
@@ -56,19 +69,28 @@ class ManimAnimationService:
         with open(tmp_path, "w") as f:
             f.write(script)
         try:
-            subprocess.run(
-                ["manim", "-pql", str(tmp_path), "GeneratedScene"],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True, check=True
-            )
+            module = importlib.import_module(str(tmp_path).replace("/", ".")[:-3])
+            with manim.tempconfig({"quality": "low_quality", "preview": False}):
+                scene = module.GeneratedScene()
+                scene.render()
             return "Success"
-        except subprocess.CalledProcessError as e:
-            return e.stderr
+        except Exception as e:
+            return str(e)
+    
+    def run_script_file(self, file_path: Path) -> str:
+        try:
+            module = importlib.import_module(str(file_path).replace("/", ".")[:-3])
+            with manim.tempconfig({"quality": "low_quality", "preview": False}):
+                scene = module.GeneratedScene()
+                scene.render()
+            return "Success"
+        except Exception as e:
+            return str(e)
     
     def fix_script(self, script: str, error: str, file_name: str) -> str:
+        lint = self._get_lint_error(f"tmp/{file_name}.py")
         prompt1 = PromptTemplate(
-            input_variables=["script", "error"],
+            input_variables=["script", "error", "lint"],
             template=self.prompts["error"]["prompt1"]
         )
         prompt2 = PromptTemplate(
@@ -80,7 +102,7 @@ class ManimAnimationService:
             first= prompt1 | self.think_llm,
             last = prompt2 | self.think_llm | parser
         )
-        messages = {"script": script, "error": error}
+        messages = {"script": script, "error": error, "lint": lint}
         output = chain.invoke(messages)
         return output.replace("```python", "").replace("```", "")
 
@@ -88,26 +110,13 @@ class ManimAnimationService:
         script = self.generate_script(user_prompt)
         err = self.run_script(file_name, script)
         count = 0
-        limit_count = 1
+        limit_count = 3
         while err != "Success" and count < limit_count:
             script = self.fix_script(script, err, file_name)
             err = self.run_script(file_name, script)
             count += 1
         return err
 
-    
-
-    def run_script_file(self, file_path: Path) -> str:
-        try:
-            subprocess.run(
-                ["manim", "-pql", str(file_path), "GeneratedScene"],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True, check=True
-            )
-            return "Success"
-        except subprocess.CalledProcessError as e:
-            return e.stderr
     
     def generate_detail_prompt(self,user_prompt:str,instruction_type:int)->str:
         # 入力された言語を判定する
