@@ -142,13 +142,13 @@ class ManimAnimationService:
         return output
 
     def _en_ja_translate_deepl(self,user_prompt:str)->str:
-        lang_en = 'EN'
+        lang_en = 'EN_US'
         lang_ja = 'JA'
         results = self.translator.translate_text(user_prompt, source_lang=lang_en, target_lang=lang_ja)
         return results 
 
     def _ja_en_translate_deepl(self,user_prompt:str)->str:
-        lang_en = 'EN'
+        lang_en = 'EN_US'
         lang_ja = 'JA'
         results = self.translator.translate_text(user_prompt, source_lang=lang_ja, target_lang=lang_en)
         return results

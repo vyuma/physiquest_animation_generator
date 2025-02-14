@@ -39,7 +39,5 @@ class GeneratedScene(Scene):
 
 if __name__ == "__main__":
     scene = GeneratedScene()
-    try:    
-        a = scene.render()
-    except 
-        print("Error")
+    a = scene.render()
+    print("Error")

@@ -1,16 +1,29 @@
-
-import subprocess
 from pathlib import Path
-
+import importlib
+import os 
 
 
 def run_script_file( file_path: Path) -> str:
-        try:
-            return "Success"
-        except Exception as e:
-            arr =f"{e.__class__.__name__}: {e}" # ZeroDivisionError: division by zero
-            return arr
+        # 絶対パスに変換
+        abs_path = os.path.abspath(file_path)
+        module_name = "ManimGeneratedScene"
+        # モジュールの仕様を作成
+        spec = importlib.util.spec_from_file_location(module_name, abs_path)
+        if spec is None:
+            raise ImportError(f"Cannot load module from {abs_path}")
+        # モジュールを作成
+        module = importlib.util.module_from_spec(spec)
+        # クラスを取得
+        if not hasattr(module, "GeneratedScene"):
+            raise ImportError(f"GeneratedScene class not found in {file_path}")
+        
+        return getattr(module, "GeneratedScene")
+
+
         
 if __name__ == "__main__":
-    a =run_script_file(Path("tests/test_2.py"))
-    print(a)
+    relative_python_file = "./tests/test_1.py"
+    GeneratedScene = run_script_file(relative_python_file)
+        # インスタンスを作成
+    scene_instance = GeneratedScene()
+    scene_instance.render()
