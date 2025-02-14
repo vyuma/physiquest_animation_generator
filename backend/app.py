@@ -92,6 +92,8 @@ async def generate_detail_prompt(prompt:DetailPrompt):
     output = animation_service.generate_detail_prompt(prompt.user_prompt, prompt.instruction_type)
     return responses.JSONResponse(content={'output': output})
 
+"""
 if __name__ == '__main__':
     import uvicorn
     uvicorn.run(app, host='localhost', port=8000)
+"""
