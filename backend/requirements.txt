@@ -14,5 +14,6 @@ pycairo
 langchain
 langchain_openai
 langchain-google-genai
+langchain-anthropic
 langdetect
 deepl

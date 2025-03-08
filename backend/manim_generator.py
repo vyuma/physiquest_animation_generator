@@ -17,17 +17,20 @@ class ManimAnimationService:
     def __init__(self):
         with open("./prompts.toml", 'rb') as f:
             self.prompts = tomllib.load(f)
-        self.think_llm = self._load_llm("gemini-2.0-flash-thinking-exp")
-        self.pro_llm   = self._load_llm("gemini-2.0-pro-exp")
-        self.flash_llm = self._load_llm("gemini-2.0-flash")
-        self.lite_llm = self._load_llm("gemini-2.0-flash-lite-preview-02-05")
+        self.think_llm = self._load_llm("claude-3-7-sonnet")
+        self.pro_llm   = self._load_llm("claude-3-7-sonnet")
+        self.flash_llm = self._load_llm("claude-3-7-sonnet")
+        self.lite_llm = self._load_llm("claude-3-7-sonnet")
         self.translator = deepl.Translator(os.getenv('DEEPL_API_KEY'))
     
     def _load_llm(self, model_type: str):
         if os.getenv('OPENAI_API_KEY'):
             return ChatOpenAI(model='gpt-4o-mini', temperature=0)
-        return ChatGoogleGenerativeAI(model=model_type, google_api_key=os.getenv('GEMINI_API_KEY'))
-
+        elif os.getenv('GEMINI_API_KEY'):
+            return ChatGoogleGenerativeAI(model=model_type, google_api_key=os.getenv('GEMINI_API_KEY'))
+        else:
+            return ChatAnthropic(model=model_type)
+        
     def generate_script(self, user_prompt: str) -> str:
         is_translation = False
         if is_translation == True:
