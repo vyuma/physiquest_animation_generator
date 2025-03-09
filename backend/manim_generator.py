@@ -18,10 +18,10 @@ class ManimAnimationService:
     def __init__(self):
         with open("./prompts.toml", 'rb') as f:
             self.prompts = tomllib.load(f)
-        self.think_llm = self._load_llm("claude-3-7-sonnet-20250219")
-        self.pro_llm   = self._load_llm("claude-3-7-sonnet-20250219")
-        self.flash_llm = self._load_llm("claude-3-7-sonnet-20250219")
-        self.lite_llm  = self._load_llm("claude-3-7-sonnet-20250219")
+        self.think_llm = self._load_llm("claude-3-7-sonnet-latest", thinking={"type": "enabled", "budget_tokens": 2000})
+        self.pro_llm   = self._load_llm("claude-3-7-sonnet-latest")
+        self.flash_llm = self._load_llm("claude-3-7-sonnet-latest")
+        self.lite_llm  = self._load_llm("claude-3-5-haiku-latest")
         self.translator = deepl.Translator(os.getenv('DEEPL_API_KEY'))
     
     def _load_llm(self, model_type: str):
