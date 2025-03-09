@@ -6,6 +6,7 @@ import tomllib
 from langdetect import detect
 from langchain_openai import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_anthropic import ChatAnthropic
 from langchain.prompts import PromptTemplate
 from langchain.schema.runnable import RunnableSequence
 from langchain_core.output_parsers import StrOutputParser
@@ -17,10 +18,10 @@ class ManimAnimationService:
     def __init__(self):
         with open("./prompts.toml", 'rb') as f:
             self.prompts = tomllib.load(f)
-        self.think_llm = self._load_llm("claude-3-7-sonnet")
-        self.pro_llm   = self._load_llm("claude-3-7-sonnet")
-        self.flash_llm = self._load_llm("claude-3-7-sonnet")
-        self.lite_llm = self._load_llm("claude-3-7-sonnet")
+        self.think_llm = self._load_llm("claude-3-7-sonnet-20250219")
+        self.pro_llm   = self._load_llm("claude-3-7-sonnet-20250219")
+        self.flash_llm = self._load_llm("claude-3-7-sonnet-20250219")
+        self.lite_llm  = self._load_llm("claude-3-7-sonnet-20250219")
         self.translator = deepl.Translator(os.getenv('DEEPL_API_KEY'))
     
     def _load_llm(self, model_type: str):
