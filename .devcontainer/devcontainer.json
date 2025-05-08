@@ -1,17 +1,9 @@
 {
     "name": "Physiquest Animation Generator Container",
     
-    "build": {
-        "dockerfile": "Dockerfile",
-        "context": "."
-    },
-    "runArgs": [
-        "--name", "physiquest_Animation_generator"
-    ],
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "physiquest_animation_generator",
     "workspaceFolder": "/workspaces/physiquest_animation_generator",
-    "mounts": [
-        "source=${localWorkspaceFolder},target=/workspaces,type=bind"
-    ],
     "customizations": {
         "vscode": {
             "extensions": [
