@@ -45,3 +45,5 @@ __pycache__/
 
 # videosフォルダを無視
 backend/media
+
+venv/
