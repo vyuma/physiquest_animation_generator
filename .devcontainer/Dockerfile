@@ -54,17 +54,18 @@ WORKDIR /workspaces/
 RUN apt-get update && apt-get install -y git
 
 
+# ================================================
+# 🟢 pnpm（モダンNodeパッケージマネージャ）の導入
+# ================================================
+RUN npm install -g corepack && corepack enable && \
+    corepack prepare pnpm@latest --activate
 
+# 確認（任意）
+RUN node -v && pnpm -v
 
-# # ユーザー情報を定義
-# ARG USERNAME=team_physiquest
-# ARG USER_UID=2000
-# ARG USER_GID=2000
+# ================================================
+# 🐍 uv（Rust製の超高速Pythonパッケージマネージャ）
+# ================================================
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+ENV PATH="/root/.cargo/bin:$PATH"
 
-# # ユーザーを作成し、ホームディレクトリの権限を修正
-# RUN groupadd --gid "$USER_GID" "$USERNAME" && \
-#     useradd -m -u "$USER_UID" -g "$USER_GID" -s /bin/bash "$USERNAME" 
-
-
-# # ユーザー変更
-# USER $USERNAME

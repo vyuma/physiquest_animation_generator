@@ -22,7 +22,7 @@ Instructions:
 {instructions}
 Output Format:
 
-python```
+```python
 from manim import *
 class GeneratedScene(Scene):
     def construct(self):
