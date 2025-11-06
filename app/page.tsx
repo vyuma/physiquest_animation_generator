@@ -10,6 +10,7 @@ import DawnloadButton from "@/app/components/DownloadButton";
 import Code from "@/app/components/Code";
 import { v4 as uuid } from "uuid";
 import promptDesoger from "@/app/utils/fetchPromptDesoger";
+import Select_Tabs from "./components/select_Tabs";
 
 
 export default function Page() {
@@ -104,16 +105,14 @@ export default function Page() {
                     <TextInputForm input={userPrompt}  handleSubmit={handleSubmit} setInput={setUserPrompt} loading={loading} />
                 </div>
                 
-
-                <div className="flex flex-col mt-4 mb-1 gap-y-4">
+                <div className="flex flex-col mt-10 mb-1 gap-y-4">
                     {
-                        filteredExamplePrompt.map((prompt,index) => {
-                            return (
-                                <div className="flex flex-col gap-2" key={index}>
-                                    <ClipboardCopy defaultText={prompt.prompt} />
-                                </div>
-                            );
-                        })
+                    
+                        
+                        <div className="flex flex-col gap-2" >
+                                    <Select_Tabs />
+                        </div>
+                        
                     }
                 </div>
                 

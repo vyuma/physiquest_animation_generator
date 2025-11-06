@@ -1,16 +1,21 @@
-version: "3.8"
-
 services:
-  app:
-    image: node:18
-    container_name: nextjs_app
-    working_dir: /app
+  physiquest_animation_generator:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
     volumes:
-      - .:/app  # ホストのコードをコンテナにマウント
-      - /app/node_modules # node_modules はホストと分離
-    ports:
-      - "3000:3000"
-    command: npm run dev
+      - ..:/workspaces/physiquest_animation_generator:cashed
+    command: ["tail", "-f", "/dev/null"]
+
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     environment:
-      - CHOKIDAR_USEPOLLING=true  # ファイル変更を検知しやすくする
-      - WATCHPACK_POLLING=true     # Webpack のファイル監視を有効化
+      POSTGRES_USER: Physiquest
+      POSTGRES_PASSWORD: genereater
+      POSTGRES_DB: physiquest_animation_generator
+
+volumes:
+  postgres_data:
